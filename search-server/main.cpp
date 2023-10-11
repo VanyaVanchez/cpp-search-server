@@ -66,7 +66,7 @@ public:
     }
 
     vector<Document> FindTopDocuments(const string& raw_query) const {
-        const Query query= ParseQuery(raw_query);
+        const Query query = ParseQuery(raw_query);
         auto matched_documents = FindAllDocuments(query);
 
         sort(matched_documents.begin(), matched_documents.end(),
@@ -117,12 +117,16 @@ private:
         return query;
     }
 
+    double FindIDF(const string& word) const {
+        return log(static_cast<double>(document_count_) / word_to_document_freqs_.at(word).size());
+    }
+
     vector<Document> FindAllDocuments(const Query& query) const {
         map <int, double> document_to_relevance;
         
         for (const string& word : query.plus_words) {
             if (word_to_document_freqs_.count(word) != 0) {
-                double IDF = log(static_cast<double>(document_count_) / word_to_document_freqs_.at(word).size());
+                double IDF = FindIDF(word);
                 for (const auto& [id, TF] : word_to_document_freqs_.at(word)) {
                     document_to_relevance[id] += IDF * TF;
                 }

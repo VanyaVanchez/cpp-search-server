@@ -7,10 +7,12 @@
 #include <utility>
 #include <vector>
 #include <stdexcept>
+#include <numeric>
 
 using namespace std;
 
 const int MAX_RESULT_DOCUMENT_COUNT = 5;
+const double lambda = 1e-6;
 
 string ReadLine() {
     string s;
@@ -103,9 +105,6 @@ public:
         if (documents_.count(document_id) != 0) {
             throw invalid_argument("repetitive id"s);
         }
-        if (is_special_char(document)) {
-            throw invalid_argument("special char"s);
-        }
 
         const vector<string> words = SplitIntoWordsNoStop(document);
         const double inv_word_count = 1.0 / words.size();
@@ -115,8 +114,7 @@ public:
         }
 
         documents_.emplace(document_id, DocumentData{ComputeAverageRating(ratings), status});
-        documents_id_[document_counter] = document_id;
-        ++document_counter;
+        documents_id_.push_back(document_id);
     }
 
     template <typename DocumentPredicate>
@@ -130,11 +128,10 @@ public:
 
         sort(result.begin(), result.end(),
              [](const Document& lhs, const Document& rhs) {
-                 if (abs(lhs.relevance - rhs.relevance) < 1e-6) {
+                 if (abs(lhs.relevance - rhs.relevance) < lambda) {
                      return lhs.rating > rhs.rating;
-                 } else {
-                     return lhs.relevance > rhs.relevance;
                  }
+                return lhs.relevance > rhs.relevance;
              });
         if (result.size() > MAX_RESULT_DOCUMENT_COUNT) {
             result.resize(MAX_RESULT_DOCUMENT_COUNT);
@@ -158,9 +155,6 @@ public:
     }
 
     tuple<vector<string>, DocumentStatus> MatchDocument(const string& raw_query, int document_id) const {
-        if (no_correct_query(raw_query)) {
-            throw invalid_argument("incorrect query"s);
-        }
         const Query query = ParseQuery(raw_query);
         vector<string> matched_words;
         for (const string& word : query.plus_words) {
@@ -184,8 +178,8 @@ public:
     }
 
     int GetDocumentId(int index) const {
-        if (documents_id_.count(index) != 0) {
-            return documents_id_.at(index);
+        if (index >= 0 && index < documents_id_.size()) {
+            return documents_id_[index];
         } else {
             throw out_of_range("no document with this index"s);
         }
@@ -199,10 +193,9 @@ private:
     const set<string> stop_words_;
     map<string, map<int, double>> word_to_document_freqs_;
     map<int, DocumentData> documents_;
-    map<int, int> documents_id_;
-    int document_counter = 0;
+    vector<int> documents_id_;
 
-    bool is_special_char(const string& s) const {
+    bool IsSpecialChar(const string& s) const {
         for (const char h : s) {
             if (h >= '\0' && h < ' ') {
                 return true;
@@ -211,14 +204,14 @@ private:
         return false;
     }
 
-    bool no_correct_query(const string& query) const {
+    bool NoCorrectQuery(const string& query) const {
         if (query.find("- "s) != string::npos) {
             return true;
         }
         if (query.find("--"s) != string::npos) {
             return true;
         }
-        if (is_special_char(query)) {
+        if (IsSpecialChar(query)) {
             return true;
         }
         if (query.at(query.size() - 1) == '-') {
@@ -234,6 +227,9 @@ private:
     vector<string> SplitIntoWordsNoStop(const string& text) const {
         vector<string> words;
         for (const string& word : SplitIntoWords(text)) {
+            if (IsSpecialChar(word)) {
+                throw invalid_argument("special char"s);
+            }
             if (!IsStopWord(word)) {
                 words.push_back(word);
             }
@@ -245,10 +241,8 @@ private:
         if (ratings.empty()) {
             return 0;
         }
-        int rating_sum = 0;
-        for (const int rating : ratings) {
-            rating_sum += rating;
-        }
+        int rating_sum = accumulate(ratings.begin(), ratings.end(), 0);
+        
         return rating_sum / static_cast<int>(ratings.size());
     }
 
@@ -274,6 +268,9 @@ private:
     };
 
     Query ParseQuery(const string& text) const {
+        if (NoCorrectQuery(text)) {
+            throw invalid_argument("incorrect query"s);
+        }
         Query query;
         for (const string& word : SplitIntoWords(text)) {
             const QueryWord query_word = ParseQueryWord(word);

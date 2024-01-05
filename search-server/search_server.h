@@ -9,6 +9,10 @@
 #include <tuple>
 #include <map>
 #include <set>
+#include <algorithm>
+#include <stdexcept>
+
+using namespace std::string_literals;
 
 const int MAX_RESULT_DOCUMENT_COUNT = 5;
 
@@ -78,7 +82,7 @@ private:
 };
 
 template <typename StringContainer>
-SearchServer::SearchServer(const StringContainer& stop_words){
+SearchServer::SearchServer(const StringContainer& stop_words) {
     if (!all_of(stop_words_.begin(), stop_words_.end(), IsValidWord)) {
         throw std::invalid_argument("Some of stop words are invalid"s);
     }

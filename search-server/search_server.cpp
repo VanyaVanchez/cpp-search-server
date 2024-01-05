@@ -8,6 +8,10 @@
 #include <stdexcept>
 #include <set>
 #include <map>
+#include <cmath>
+#include <algorithm>
+
+using namespace std::string_literals;
 
 const int MAX_RESULT_DOCUMENT_COUNT = 5;
 
@@ -110,7 +114,7 @@ int SearchServer::ComputeAverageRating(const std::vector<int>& ratings) {
     return rating_sum / static_cast<int>(ratings.size());
 }
 
-QueryWord SearchServer::ParseQueryWord(const std::string& text) const {
+SearchServer::QueryWord SearchServer::ParseQueryWord(const std::string& text) const {
     if (text.empty()) {
         throw std::invalid_argument("Query word is empty"s);
     }
@@ -121,13 +125,13 @@ QueryWord SearchServer::ParseQueryWord(const std::string& text) const {
         word = word.substr(1);
     }
     if (word.empty() || word[0] == '-' || !IsValidWord(word)) {
-        throw std::invalid_argument("Query word "s + text + " is invalid");
+        throw std::invalid_argument("Query word "s + text + " is invalid"s);
     }
 
     return {word, is_minus, IsStopWord(word)};
 }
 
-Query SearchServer::ParseQuery(const std::string& text) const {
+SearchServer::Query SearchServer::ParseQuery(const std::string& text) const {
     Query result;
     for (const std::string& word : SplitIntoWords(text)) {
         const auto query_word = ParseQueryWord(word);
@@ -143,5 +147,5 @@ Query SearchServer::ParseQuery(const std::string& text) const {
 }
 
 double SearchServer::ComputeWordInverseDocumentFreq(const std::string& word) const {
-    return std::log(GetDocumentCount() * 1.0 / word_to_document_freqs_.at(word).size());
+    return log(GetDocumentCount() * 1.0 / word_to_document_freqs_.at(word).size());
 }

@@ -9,6 +9,8 @@
 #include "string_processing.h"
 #include "request_queue.h"
 
+using namespace std::string_literals;
+
 int main() {
     SearchServer search_server("and in at"s);
     RequestQueue request_queue(search_server);

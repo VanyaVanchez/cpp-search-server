@@ -1,5 +1,7 @@
 #pragma once
 
+#include <ostream>
+
 enum class DocumentStatus {
     ACTUAL,
     IRRELEVANT,

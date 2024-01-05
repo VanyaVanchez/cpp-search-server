@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <algorithm>
 
 template <typename Iterator>
 class IteratorRange {
@@ -59,7 +60,7 @@ template <typename Iterator>
 Paginator<Iterator>::Paginator(Iterator begin, Iterator end, size_t page_size) {
     for (auto it = begin; it < end; it += page_size){
         Iterator page_begin = it;
-        Iterator page_end = next(it, min(page_size, static_cast<size_t>(distance(it, end))));
+        Iterator page_end = next(it, std::min(page_size, static_cast<size_t>(distance(it, end))));
         pages_.push_back(IteratorRange(page_begin, page_end));
     } 
 }

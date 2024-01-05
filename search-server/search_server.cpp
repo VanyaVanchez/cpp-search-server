@@ -1,6 +1,5 @@
 #include "search_server.h"
-#include "main.cpp"
-#include "document.h"
+#include "string_processing.h"
 
 #include <string>
 #include <tuple>
@@ -8,12 +7,10 @@
 #include <stdexcept>
 #include <set>
 #include <map>
-#include <cmath>
 #include <algorithm>
+#include <cmath>
 
 using namespace std::string_literals;
-
-const int MAX_RESULT_DOCUMENT_COUNT = 5;
 
 SearchServer::SearchServer(const std::string& stop_words_text)
         : SearchServer(

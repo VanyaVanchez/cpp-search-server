@@ -1,6 +1,5 @@
 #pragma once
 
-#include "main.cpp"
 #include "document.h"
 
 

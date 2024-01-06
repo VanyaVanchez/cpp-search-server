@@ -1,6 +1,7 @@
 #pragma once
 
 #include "document.h"
+#include "string_processing.h"
 
 
 #include <string>
@@ -81,7 +82,9 @@ private:
 };
 
 template <typename StringContainer>
-SearchServer::SearchServer(const StringContainer& stop_words) {
+SearchServer::SearchServer(const StringContainer& stop_words)
+    : stop_words_(MakeUniqueNonEmptyStrings(stop_words))  // Extract non-empty stop words
+{
     if (!all_of(stop_words_.begin(), stop_words_.end(), IsValidWord)) {
         throw std::invalid_argument("Some of stop words are invalid"s);
     }

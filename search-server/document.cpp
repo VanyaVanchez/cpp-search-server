@@ -3,8 +3,7 @@
 #include <iostream>
 #include <string>
 
-
-Document::Document() = default;
+//Document::Document() = default;
 
 Document::Document(int id, double relevance, int rating)
         : id(id)

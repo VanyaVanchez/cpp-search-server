@@ -27,5 +27,5 @@ jobs:
       - name: Commit and push diagram
         run: |
           git add diagram.svg
-          git commit -m "Update repository diagram"
+          git diff --cached --quiet || git commit -m "Update repository diagram"
           git push

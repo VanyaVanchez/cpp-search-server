@@ -24,7 +24,7 @@ jobs:
       - name: Generate constant diagram
         uses: githubocto/repo-visualizer@0.9.1
         with:
-          output: ./diagram.svg # Генерация диаграммы с постоянным названием
+          output_file: ./diagram.svg # Указываем путь с правильным параметром
 
       - name: Generate timestamped diagram
         run: |

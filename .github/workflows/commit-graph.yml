@@ -18,11 +18,9 @@ jobs:
 
       - name: Generate graph
         run: |
-          # Создание dot-файла из коммитов
           echo 'digraph G {' > graph.dot
-          git log --all --pretty=format:'"%h" -> "%p";' | grep -v ' -> "";' >> graph.dot
+          git log --all --pretty=format:'"%h" -> "%p";' | grep -v ' -> "";' >> graph.dot || echo "No parents to process"
           echo '}' >> graph.dot
-          # Генерация SVG-файла
           dot -Tsvg graph.dot -o graph.svg
 
       - name: Upload graph

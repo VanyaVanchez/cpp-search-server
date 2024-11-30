@@ -1,0 +1,24 @@
+name: Generate Commit Graph
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  generate-graph:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Generate graph
+        run: |
+          git log --graph --oneline --all --decorate | dot -Tsvg > graph.svg
+
+      - name: Upload graph
+        uses: actions/upload-artifact@v3
+        with:
+          name: commit-graph
+          path: graph.svg

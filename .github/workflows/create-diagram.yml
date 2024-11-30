@@ -21,8 +21,8 @@ jobs:
           git config --local user.name "GitHub Actions"
           git config --local user.email "actions@github.com"
 
-      - name: Generate diagram
-        uses: githubocto/repo-visualizer@main
+      - name: Repo Visualizer
+        uses: githubocto/repo-visualizer@0.9.1
 
       - name: Commit and push diagram
         run: |

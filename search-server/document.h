@@ -6,7 +6,7 @@ enum class DocumentStatus {
     ACTUAL,
     IRRELEVANT,
     BANNED,
-    REMOVED,
+    REMOVED, 
 };
 
 struct Document {

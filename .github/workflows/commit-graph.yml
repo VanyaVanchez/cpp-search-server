@@ -18,7 +18,12 @@ jobs:
 
       - name: Generate graph
         run: |
-          git log --graph --oneline --all --decorate | dot -Tsvg > graph.svg
+          # Создание dot-файла из коммитов
+          echo 'digraph G {' > graph.dot
+          git log --all --pretty=format:'"%h" -> "%p";' | grep -v ' -> "";' >> graph.dot
+          echo '}' >> graph.dot
+          # Генерация SVG-файла
+          dot -Tsvg graph.dot -o graph.svg
 
       - name: Upload graph
         uses: actions/upload-artifact@v3

@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Generate diagram
-        uses: githubocto/repo-visualizer@v1
+        uses: githubocto/repo-visualizer
 
       - name: Commit and push diagram
         run: |

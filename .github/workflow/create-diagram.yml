@@ -1,0 +1,29 @@
+name: Create Diagram
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  generate-diagram:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Generate diagram
+        uses: githubocto/repo-visualizer@v1
+
+      - name: Commit and push diagram
+        run: |
+          git config --local user.name "GitHub Actions"
+          git config --local user.email "actions@github.com"
+          mv diagram.svg ./diagram.svg
+          git add diagram.svg
+          git commit -m "Update repository diagram"
+          git push

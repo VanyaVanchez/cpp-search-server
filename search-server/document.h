@@ -3,7 +3,7 @@
 #include <ostream>
 
 enum class DocumentStatus {
-    ACTUAL, 
+    ACTUAL,
     IRRELEVANT,
     BANNED,
     REMOVED,

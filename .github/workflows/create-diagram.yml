@@ -21,11 +21,19 @@ jobs:
           git config --local user.name "GitHub Actions"
           git config --local user.email "actions@github.com"
 
-      - name: Repo Visualizer
+      - name: Generate constant diagram
         uses: githubocto/repo-visualizer@0.9.1
+        with:
+          output: ./diagram.svg # Генерация диаграммы с постоянным названием
 
-      - name: Commit and push diagram
+      - name: Generate timestamped diagram
         run: |
-          git add diagram.svg
-          git diff --cached --quiet || git commit -m "Update repository diagram"
+          mkdir -p diagrams
+          cp ./diagram.svg ./diagrams/diagram-$(date +'%Y%m%d%H%M%S').svg
+
+      - name: Commit and push diagrams
+        run: |
+          git add ./diagram.svg
+          git add ./diagrams/diagram-*.svg
+          git diff --cached --quiet || git commit -m "Update repository diagram and save versioned copy"
           git push

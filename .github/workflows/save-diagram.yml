@@ -21,8 +21,11 @@ jobs:
           mkdir -p diagrams
           mv diagram.svg diagrams/diagram-$(date +'%Y%m%d%H%M%S').svg
 
-      - name: Commit and push diagrams
+      - name: Commit and push diagram
         run: |
-          git add diagrams/
-          git commit -m "Add new diagram"
+          git config --local user.name "GitHub Actions"
+          git config --local user.email "actions@github.com"
+          git pull --rebase origin main
+          git add diagram.svg
+          git commit -m "Repo visualizer: update diagram" || echo "No changes to commit"
           git push
